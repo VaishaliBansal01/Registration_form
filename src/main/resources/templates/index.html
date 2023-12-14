@@ -15,9 +15,41 @@
     <meta charset="UTF-8">
     <title>Welcome</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+
+    <style>
+        .Page3{
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
-<h1>Welcome</h1>
-<a th:href="@{registration_form}">Go to user registration form</a>
+
+<div class="Page1">
+   <h1>Welcome</h1>
+   <a th:href="@{registration_form}">Go to user registration form</a>
+</div>
+
+
+<div th:if="${param.error == 'duplicateEmail'}">Email already exists. Please use a different email.</div>
+
+
+
+<!--<div class="Page2">
+   <h2>Already a register user?<a th:href="@{/login}">Click here to Login</a></h2>
+</div>-->
+
+<div class="Page3">
+    <form th:action="@{/login_f}" th:object="${user}" method="post">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+
+
 </body>
+
+
+
 </html>

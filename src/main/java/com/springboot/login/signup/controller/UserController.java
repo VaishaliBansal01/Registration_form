@@ -1,5 +1,6 @@
 package com.springboot.login.signup.controller;
 
+import ch.qos.logback.core.net.SMTPAppenderBase;
 import com.springboot.login.signup.entity.User;
 import com.springboot.login.signup.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @Controller
 public class UserController {
@@ -37,7 +40,9 @@ public class UserController {
     {
       User user = new User();
       model.addAttribute("user", user);
-      return "registration_form";
+      //return "registration_form";
+
+        return "registration_form";
     }
     @PostMapping("/save")
     public String saveUser(@ModelAttribute User user, Model model)
@@ -46,28 +51,55 @@ public class UserController {
         String encryptedPassword = crypt.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         model.addAttribute("user", user);
-        userRepo.save(user);
-        return "display_form";
+        /*User existingUser  = userRepo.findByEmail(user.getEmail());
+           if(existingUser!=null)
+           {
+               return "registration_form?error=duplicateEmail";
+           }*/
+           userRepo.save(user);
+
+        /*String existingEmail = String.valueOf(userRepo.findByEmail(user.getEmail()));
+           if(Objects.equals(existingEmail, user.getEmail()))
+           {
+               return "registration_form";
+           }
+           else*/
+        return "index";
     }
    @GetMapping("/login")
     public String showLoginForm(@ModelAttribute User user, Model model)
     {
-       /* User user1 = userRepo.findBYEmail(user.getEmail());
-        if(user1!=null)*/
-       return "login_form";
-       /* else
-            return "registration_form";*/
+        model.addAttribute("password",user.getPassword());
+        //User user1 = userRepo.findByEmail(user.getEmail());
+        //if(user1!=null)
+          return "index";
+           //else
+           // return "registration_form";
     }
     @PostMapping("/login_f")
     public String login(@ModelAttribute User user, Model model)
     {
-        //BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
+        BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
         User user1 = userRepo.findByEmail(user.getEmail());
-       if(user1!= null )
+       /*if(user1!= null )
            return "success";
 
        else
-           return "login_form";
+           return "login_form";*/
+        if(user1!= null)
+        {
+          String encryptedPass = user1.getPassword();
+            if(crypt.matches(user.getPassword(), encryptedPass))
+           {
+               return "success";
+           }
+            else
+            {
+                return "index";
+            }
+        }
+        else
+            return "index";
     }
 
 }

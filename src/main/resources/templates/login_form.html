@@ -17,8 +17,10 @@
 </head>
 <body>
 <form th:action="@{/login_f}" th:object="${user}" method="post">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Password" required>
+    <input type="email" th:field="*{email}" placeholder="Email" required>
+    <input type="password" th:field="*{password}"  placeholder="Password" required>
+
+    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
     <button type="submit">Login</button>
 </form>
 
