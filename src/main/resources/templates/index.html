@@ -30,7 +30,7 @@
 </div>
 
 
-<div th:if="${param.error == 'duplicateEmail'}">Email already exists. Please use a different email.</div>
+<!--<div th:if="${param.error == 'duplicateEmail'}">Email already exists. Please use a different email.</div>-->
 
 
 
@@ -41,15 +41,16 @@
 <div class="Page3">
     <form th:action="@{/login_f}" th:object="${user}" method="post">
         <input type="email" name="email" placeholder="Email" required>
+        <div th:if="${error2}" style="color: red;">
+            <span th:text="${error2}"></span>
+        </div>
+
         <input type="password" name="password" placeholder="Password" required>
+        <div th:if="${error1}" style="color: red;">
+            <span th:text="${error1}"></span>
+        </div>
         <button type="submit">Login</button>
     </form>
 </div>
-
-
-
 </body>
-
-
-
 </html>

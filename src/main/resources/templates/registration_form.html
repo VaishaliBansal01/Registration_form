@@ -56,6 +56,15 @@
                     <div class="col-md-6 form-group">
                         <label>Email</label>
                         <input type="email" step="any" class="form-control" th:field="*{email}">
+<!--                        <div th:if="${param.error == 'duplicateEmail'}">Email already exists. Please use a different email.</div>-->
+<!--                        <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Duplicate Email</p>-->
+
+                        <!--<div th:if="${duplicateEmailError}" style="color: red;">
+                            <span th:text="${duplicateEmailError}"></span>
+                        </div>-->
+                        <div th:if="${error}" style="color: red;">
+                            <span th:text="${error}"></span>
+                        </div>
                     </div>
                         <div class="col-md-6 form-group">
                             <label>Password</label>

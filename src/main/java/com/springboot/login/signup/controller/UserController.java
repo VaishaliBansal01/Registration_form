@@ -3,10 +3,12 @@ package com.springboot.login.signup.controller;
 import ch.qos.logback.core.net.SMTPAppenderBase;
 import com.springboot.login.signup.entity.User;
 import com.springboot.login.signup.repo.UserRepo;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -45,17 +47,27 @@ public class UserController {
         return "registration_form";
     }
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute User user, Model model)
+    public String saveUser(@ModelAttribute User user, Model model,HttpSession session)
     {
         BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
         String encryptedPassword = crypt.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         model.addAttribute("user", user);
-        /*User existingUser  = userRepo.findByEmail(user.getEmail());
-           if(existingUser!=null)
+        User existingUser  = userRepo.findByEmail(user.getEmail());
+
+           if(existingUser!=null )
            {
-               return "registration_form?error=duplicateEmail";
-           }*/
+               model.addAttribute("error", "Email already exists. Please use a different email.");
+               /*if (session.getAttribute("duplicateEmailError") != null)
+               {
+                   model.addAttribute("duplicateEmailError", session.getAttribute("duplicateEmailError"));
+                   session.removeAttribute("duplicateEmailError"); // Remove the error message attribute after displaying it
+               }
+               session.setAttribute("duplicateEmailError", "Email already exists. Please use a different email.");*/
+
+              // return "redirect:/registration_form?error=duplicateEmail";
+               return "registration_form";
+           }
            userRepo.save(user);
 
         /*String existingEmail = String.valueOf(userRepo.findByEmail(user.getEmail()));
@@ -69,7 +81,7 @@ public class UserController {
    @GetMapping("/login")
     public String showLoginForm(@ModelAttribute User user, Model model)
     {
-        model.addAttribute("password",user.getPassword());
+        //model.addAttribute("password",user.getPassword());
         //User user1 = userRepo.findByEmail(user.getEmail());
         //if(user1!=null)
           return "index";
@@ -95,10 +107,14 @@ public class UserController {
            }
             else
             {
+                model.addAttribute("error1", "Invalid Password.");
+
                 return "index";
             }
         }
         else
+            model.addAttribute("error2", "not registered email.");
+
             return "index";
     }
 
